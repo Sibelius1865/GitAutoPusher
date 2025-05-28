@@ -1,8 +1,9 @@
 #!/bin/bash
 
-CONFIG_FILE="$HOME/scripts/repos.conf"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$CURRENT_DIR/repos.conf"
 CURRENT_MINUTE=$(date +%s)
-LOG_DIR="$HOME/scripts/logs"
+LOG_DIR="$CURRENT_DIR/logs"
 
 mkdir -p "$LOG_DIR"
 
@@ -11,7 +12,7 @@ while IFS= read -r line; do
 
   IFS=':' read -r INTERVAL REPO_DIR BRANCH <<< "$line"
 
-  HASH=$(echo "$REPO_DIR" | md5sum | cut -d ' ' -f1)
+  HASH=$(echo -n "$REPO_DIR" | /sbin/md5 | awk '{print $NF}')
   STATE_FILE="/tmp/last_run_$HASH"
   LOG_FILE="$LOG_DIR/$(basename "$REPO_DIR").log"
 
